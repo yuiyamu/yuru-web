@@ -26,7 +26,7 @@
     <div id="computer-side-img">
         <div id="left-computer-content">
                 <p>{$_('lilac.whoAmI.body1')}</p>
-                <p>f{$_('lilac.whoAmI.body2')}</p>
+                <p>{$_('lilac.whoAmI.body2')}</p>
                 <p>{$_('lilac.whoAmI.body3')}</p>
         </div>
         <div id="computer-side-img-container">

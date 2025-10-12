@@ -103,8 +103,14 @@ app.get('/sets', (req, res) => { //sends back set info we have stored c:
 });
 
 app.get('/lastfm', async(req, res) => {
+    let isKanojo = req.query.isKanojo ?? false;
     try {
-        let songInfo = await fetch(`https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=yurukyan&api_key=${process.env.LAST_FM_KEY}&format=json&limit=1`);
+        let songInfo;
+        if (isKanojo) {
+            songInfo = await fetch(`https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=meowpurrmrrp&api_key=${process.env.LAST_FM_KEY}&format=json&limit=1`);
+        } else {
+            songInfo = await fetch(`https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=yurukyan&api_key=${process.env.LAST_FM_KEY}&format=json&limit=1`);
+        }
         res.send(await songInfo.json());
     } catch (err) {
         console.log(err.message);
