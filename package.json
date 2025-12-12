@@ -4,7 +4,10 @@
   "version": "2.3.0",
   "type": "module",
   "packageManager": "pnpm@10.0.0",
-  "workspaces": ["packages/*", "apps/*"],
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "engines": {
     "node": ">=18"
   },
@@ -14,6 +17,6 @@
     "check-types": "turbo run check-types"
   },
   "devDependencies": {
-    "turbo": "^2.5.5"
+    "turbo": "^2.6.3"
   }
 }
