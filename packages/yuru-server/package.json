@@ -9,9 +9,10 @@
   },
   "scripts": {
     "dev": "npx tsx main.ts",
-    "build": "tsc || true && cp lilacgds.json sets.json switches.json sydneygds.json .env dist/"
+    "build-": "tsc || true && cp lilacgds.json sets.json switches.json sydneygds.json .env dist/ && cp -R page dist/"
   },
   "dependencies": {
+    "typescript": "5.8.2",
     "cors": "^2.8.5",
     "dotenv": "^17.0.1",
     "express": "^5.1.0",
@@ -20,7 +21,6 @@
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.3",
-    "typescript": "5.8.2"
+    "@types/express": "^5.0.3"
   }
 }
