@@ -109,7 +109,7 @@ export async function grabSongInfo(id: number, type: string) {
         artist: apiResponse[0].artist,
         artistUnicode: apiResponse[0].artist_unicode,
         url: `https://osu.ppy.sh/beatmapsets/${apiResponse[0].beatmapset_id}`,
-        id: apiResponse[0].beatmapset_id,
+        mapId: apiResponse[0].beatmapset_id,
         status: findStatus(apiResponse[0].approved)
       });
 

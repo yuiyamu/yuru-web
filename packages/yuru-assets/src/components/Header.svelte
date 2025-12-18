@@ -187,7 +187,7 @@
             flex-direction: column;
             position: fixed;
             overflow: hidden;
-            height: 100vh;
+            height: 100%;
             width: 0; /* width gets changed when it's opened, 0 by default */
             top: 0;
             right: 0;

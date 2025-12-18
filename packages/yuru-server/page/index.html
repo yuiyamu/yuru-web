@@ -28,15 +28,282 @@
       <div class="section-divide"></div>
       <h1>ꕤ endpoints</h1>
       <div>
-        <p><code>/gds</code> - returns the osu! guest difficulties list for lilac or sydney, requires <code>person</code> option</p>
-        <p><code>/sets</code> - returns the list of osu! beatmapsets that both of us have done</p>
-        <p><code>/lastfm</code> - using last.fm, returns the song last listened to, or the song we're currently listening to</p>
-        <p><code>/recentFronts</code> - using pluralkit, returns information about the last front each alter had, as well as a percentage that each alter has fronted in that timeframe</p>
-        <p><code>/frontData</code> - using pluralkit, returns historical front information for our system</p>
-        <p><code>/newMapData</code> - allows you to see the basic info about an osu! map in the format that they're servered on our website. requires <code>beatmapId</code> or <code>beatmapsetId</code> options</p>
-        <p><code>/changeInfo</code> - accepts new set or gd information. requires a yuru.ca api access token</p>
+        <p><b><code>/gds</code></b> - returns the osu! guest difficulties list for lilac or sydney. requires <code>person</code> parameter.</p>
+        <p class="parameters"><code>person</code>: can either be <code>lilac</code> or <code>sydney</code></p>
+        <p class="parameters"><code>search</code>: partial matching <code>string</code> of gd information, returns only matching maps</p>
+
+        <p><b><code>/sets</code></b> - returns the list of osu! beatmapsets that all of us have on our profile.</p>
+        <p class="parameters"><code>search</code>: partial matching <code>string</code> of beatmapset information, returns only matching maps</p>
+
+        <p><b><code>/lastfm</code></b> - using the last.fm api, returns the song we've last listened to, or the song we're currently listening to. essentially forwards the <code>getrecenttracks</code> parameter, but using our own api key. the <code>isKanojo</code> parameter returns our girlfriend's last.fm information if true, but these are the only two last.fm accounts supported through this endpoint.</p>
+        <p class="parameters"><code>isKanojo</code>: <code>boolean</code>, <code>false</code> by default. <code>true</code> sends our girlfriend's last.fm information</p>
+        
+        <p><b><code>/recentFronts</code></b> - returns an <code>alter</code> object for each alter in our system. also takes the optional parameter <code>days</code> to specify a different timeframe to track alter stats (default is 30 days).</p>
+        <p class="parameters"><code>days</code>: <code>number</code> of previous days that should be taken into account for alter information calculation. <code>30</code> by default.</p>
+        
+        <p><b><code>/frontData</code></b> - returns an <code>alter</code> object with complete front history for each alter in our system. <code>frontHistory</code> takes much longer to load, making it ideal to have a different endpoint only when it is needed. also accepts the <code>id</code> parameter to specify a different system than our own, using the pluralkit id system.</p>
+        <p class="parameters"><code>id</code>: pluralkit system id for custom system information. <code>ytcvss</code> by default (yurukyan△ system).</p>
+
+        <h2 style="margin-bottom: 0px; font-size: 22px;">ꕤ cli endpoints</h2>
+            <p style="margin-top: 2px;">thes are endpoints made specifically for use with yuru-cli to read and edit osu! beatmap information.</p>
+        <p><b><code>/newMapData</code></b> - returns a <code>beatmap</code> or <code>gd</code> object, depending on whether or not the required <code>beatmapId</code> or <code>beatmapsetId</code> parameters are used.</p>
+        <p><b><code>/changeInfo</code></b> - accepts a <code>POST</code> request with a formatted <code>gd</code> or <code>beatmap</code> object, requiring both a yurunet access key in the <code>authorization</code> header and the <code>type</code> property which is used to specify which kind of modification is to be done to the gd or beatmapset database.</p>
       </div>
-      <div class="section-divide"></div>
+        <h1>ꕤ structures</h1>
+            <div class="structure">
+            <h2>gd</h2>
+            <table>
+                <tr>
+                    <td><code>bgLink</code></td>
+                    <td><code>string</code> - a link to the beatmapset's background on <a href="https://assets.ppy.sh/">assets.ppy.sh</a>, using the cover option. does not work with beatmap specific backgrounds that differ from the set background, but this is a limiation of the osu api.</td>
+                </tr>
+                <tr>
+                    <td><code>title</code></td>
+                    <td><code>string</code></td>
+                </tr>
+                <tr>
+                    <td><code>titleUnicode</code></td>
+                    <td><code>string</code>, added automatically now but may not exist on every gd. will need to fix :p</td>
+                </tr>
+                <tr>
+                    <td><code>artist</code></td>
+                    <td><code>string</code></td>
+                </tr>
+                <tr>
+                    <td><code>artistUnicode</code></td>
+                    <td><code>string</code>, same case with titleUnicode</td>
+                </tr>
+                <tr>
+                    <td><code>creator</code></td>
+                    <td><code>string</code>, name of the person who hosts the beatmapset the given gd is on</td>
+                </tr>
+                <tr>
+                    <td><code>mapId</code></td>
+                    <td><code>string</code>, for some reason. beatmapset id assigned to the whole set</td>
+                </tr>
+                <tr>
+                    <td><code>status</code></td>
+                    <td><code>string</code>, can be "graved", "unfinished", "pending", "ranked", "loved", "qualified", or "wip"</td>
+                </tr>
+                <tr>
+                    <td><code>isForRank</code></td>
+                    <td><code>boolean</code>, indicates if the map is being pushed for rank in our opinion. by default, if <code>false</code>, a gd will not show up on the main page</td>
+                </tr>
+                <tr>
+                    <td><code>bns</code></td>
+                    <td><code>string[]</code>, can be any amount as some beatmapsets can have a variable amount of beatmap nominators (specifically, hybrid sets)</td>
+                </tr>
+                <tr>
+                    <td><code>maps</code></td>
+                    <td><code>beatmap[]</code> - seeing as some maps can have multiple gds by us on them, each individual gd must have its own data. below is the structure for each gd:</td>
+                </tr>
+            </table>
+        </div>
+        <div class="structure">
+            <h2>beatmap</h2>
+            <table>
+                <tr>
+                    <td><code>url</code></td>
+                    <td><code>string</code>, link to the specific difficulty as opposed to the beatmapset itself</td>
+                </tr>
+                <tr>
+                    <td><code>id</code></td>
+                    <td><code>string</code>, for some reason. again, beatmap specific id here</td>
+                </tr>
+                <tr>
+                    <td><code>diffname</code></td>
+                    <td><code>string</code></td>
+                </tr>
+                <tr>
+                    <td><code>amountMapped</code></td>
+                    <td><code>string</code>, "all" by default, something else for any collab difficulty. can be "evens"/"odds" or any timestamp in the map, just depends on what kind of collab was done</td>
+                </tr>
+                <tr>
+                    <td><code>sr</code></td>
+                    <td><code>number</code>. that's slang for star rating if you're new to the chat. heh.</td>
+                </tr>
+                <tr>
+                    <td><code>dateFinished</code></td>
+                    <td><code>string</code> dates in mm/dd/yyyy format, marked for when the gd was completed</td>
+                </tr>
+            </table>
+        </div>
+        <div class="structure">
+            <h2>beatmapset</h2>
+            <table>
+                <tr>
+                    <td><code>isIncomplete</code></td>
+                    <td><code>boolean</code>, used to sort if the beatmapset appears in the complete or incompleted section. complete sets are ones with finished spreads, ready for rank / have been ranked.</td>
+                </tr>
+                <tr>
+                    <td><code>bgLink</code></td>
+                    <td><code>string</code>, same as <code>gd</code>, pulled from <a href="https://assets.ppy.sh/">assets.ppy.sh</a> using covers.</td>
+                </tr>
+                <tr>
+                    <td><code>title</code></td>
+                    <td><code>string</code></td>
+                </tr>
+                <tr>
+                    <td><code>titleUnicode</code></td>
+                    <td><code>string</code> - also needs to be added to every beatmapset but isn't yet ^_^;</td>
+                </tr>
+                <tr>
+                    <td><code>artist</code></td>
+                    <td><code>string</code></td>
+                </tr>
+                <tr>
+                    <td><code>artistUnicode</code></td>
+                    <td><code>string</code> - also needs to be added to every beatmapset but isn't yet ^_^;</td>
+                </tr>
+                <tr>
+                    <td><code>url</code></td>
+                    <td><code>string</code></td>
+                </tr>
+                <tr>
+                    <td><code>mapId</code></td>
+                    <td><code>string</code>, id for the beatmapset itself and not any of the gds</td>
+                </tr>
+                <tr>
+                    <td><code>description</code></td>
+                    <td><code>description[]</code> - descriptions use their own special format due to how osu user hovers are embedded in the description json. more info in the description structure itself.</td>
+                </tr>
+                <tr>
+                    <td><code>creator</code></td>
+                    <td><code>string</code>, the username of the creator of the beatmapset (eg. yuiyamu)</td>
+                </tr>
+                <tr>
+                    <td><code>dateFinished</code></td>
+                    <td><code>string</code>, also in mm/dd/yyyy format, can be for either when the set was finished (for completed beatmapsets), or when the mapset was abandoned (seen as "complete")</td>
+                </tr>
+                <tr>
+                    <td><code>personCreator</code></td>
+                    <td><code>string</code> - different from <code>creator</code> in that the actual name of the beatmapset creator is used here (eg. lilac)</td>
+                </tr>
+                <tr>
+                    <td><code>status</code></td>
+                    <td><code>string</code>, same possible statuses as <code>gd</code> ("graved", "unfinished", "pending", "ranked", "loved", "qualified", or "wip")</td>
+                </tr>
+            </table>
+        </div>
+        <div class="structure">
+            <h2>description</h2>
+            <table>
+                <tr>
+                    <td><code>type</code></td>
+                    <td><code>string</code>, either <code>description</code> for normal text or <code>hover</code> for an inline osu hover object</td>
+                </tr>
+                <tr>
+                    <td><code>content</code></td>
+                    <td>type varies depending on the type of description element. <code>description</code> types use a <code>string</code>, whereas <code>hover</code> uses another substructure seen below.</td>
+                </tr>
+            </table>
+        </div>
+        <div class="structure">
+            <h2>hover</h2>
+            <table>
+                <tr>
+                    <td><code>username</code></td>
+                    <td><code>string</code></td>
+                </tr>
+                <tr>
+                    <td><code>userID</code></td>
+                    <td><code>number</code></td>
+                </tr>
+                <tr>
+                    <td><code>flag</code></td>
+                    <td><code>string</code>, name of the svg hosted on <a href="https://osu.ppy.sh/assets/images/flags/">https://osu.ppy.sh/assets/images/flags/</a></td>
+                </tr>
+                <tr>
+                    <td><code>flagCode</code></td>
+                    <td><code>string</code>, ISO 3166-1 alpha-2 country codes</td>
+                </tr>
+                <tr>
+                    <td><code>bannerUrl</code></td>
+                    <td><code>string</code>, link to the osu user's banner</td>
+                </tr>
+            </table>
+        </div>
+        <div class="structure">
+            <h2>alter</h2>
+            <table>
+                <tr>
+                    <td><code>name</code></td>
+                    <td><code>string</code>, name of the current alter. (no fronter) is used when no alter is present.</td>
+                </tr>
+                <tr>
+                    <td><code>id</code></td>
+                    <td><code>string</code>, the id of the alter as in the pluralkit system</td>
+                </tr>
+                <tr>
+                    <td><code>fronting</code></td>
+                    <td><code>boolean</code>, marks if the alter is currently fronting in their system. can be true for multiple alters</td>
+                </tr>
+                <tr>
+                    <td><code>totalFrontTime</code></td>
+                    <td><code>number</code> - number of ms the alter has fronted in the period allotted</td>
+                </tr>
+                <tr>
+                    <td><code>lastFrontTime</code></td>
+                    <td><code>number</code>. <b>only appearing in <code>/recentFronts</code></b>, number of ms this alter fronted for during their last front. if currently fronting, number of ms from when they started fronting until now</td>
+                </tr>
+                <tr>
+                    <td><code>lastFrontTimestamp</code></td>
+                    <td><code>Date</code>. <b>only appearing in <code>/recentFronts</code></b>, timestamp that the alter started their last front</td>
+                </tr>
+                <tr>
+                    <td><code>percent</code></td>
+                    <td><code>number</code>, percentage that this alter has fronted in the allotted time period</td>
+                </tr>
+                <tr>
+                    <td><code>firstAppearance</code></td>
+                    <td><code>number</code>. <b>only appearing in <code>/frontHistory</code></b>, this is the first time that the alter was ever seen in the system as a date in number of ms since the unix epoch.</td>
+                </tr>
+                <tr>
+                    <td><code>lastFrontTimes</code></td>
+                    <td><code>alterTimes</code>, an easily readable format for <code>lastFrontTime</code>. like <code>lastFrontTime</code> and <code>lastFrontTimestamp</code>, this also <b>only appears in <code>/recentFronts</code></b></td>
+                </tr>
+                <tr>
+                    <td><code>totalFrontTimes</code></td>
+                    <td><code>alterTimes</code>, an easily readable format for <code>lastFrontTime</code></td>
+                </tr>
+                <tr>
+                    <td><code>frontHistory</code></td>
+                    <td><code>frontHistory[]</code>. history of all of the switches an alter has recorded</td>
+                </tr>
+            </table>
+        </div>
+        <div class="structure">
+            <h2>alterTimes</h2>
+            <table>
+                <tr>
+                    <td><code>days</code></td>
+                    <td><code>number</code></td>
+                </tr>
+                <tr>
+                    <td><code>hours</code></td>
+                    <td><code>number</code></td>
+                </tr>
+                <tr>
+                    <td><code>minutes</code></td>
+                    <td><code>number</code></td>
+                </tr>
+            </table>
+        </div>
+        <div class="structure" style="margin-bottom: 20px;">
+            <h2>frontHistory</h2>
+            <table>
+                <tr>
+                    <td><code>timestamp</code></td>
+                    <td><code>number</code>, time of the initial switch in ms since the unix epoch.</td>
+                </tr>
+                <tr>
+                    <td><code>length</code></td>
+                    <td><code>number</code>, number of ms long the alter's front lasted. in the case of a currently fronting alter, number of ms since the switch started until now.</td>
+                </tr>
+            </table>
+        </div>
+        <div class="section-divide"></div>
+
       <div id="footer">
         <span>made by</span>
         <img src="https://api.yuru.ca/favicon.ico" alt="yurukyan">
@@ -67,6 +334,7 @@ a {
 
 :root {
     --tent: #FCE758;
+    --table-accent: #4e4b4b;
 }
 
 /* header icons */
@@ -116,10 +384,39 @@ header {
     background-color: rgb(60, 60, 60);
 }
 
+code {
+    font-size: 15px;
+}
+
+.parameters {
+    margin-left: 30px;
+    margin-top: -3px; /* highkey janky as fuck but it's okay. */
+    margin-bottom: -3px;
+}
+
+.structure h2 {
+    margin-bottom: 0px; 
+} .structure p {
+    margin-top: 5px;
+    margin-bottom: 0px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+} td, th {
+  border: 1px solid var(--table-accent);
+  text-align: left;
+  padding: 8px;
+} tr:nth-child(even) {
+  background-color: var(--table-accent);
+}
+
 #footer {
     margin-top: 10px;
     width: 100%;
     text-align: center;
+    margin-bottom: 40px;
 } #footer img {
     width: 2%;
     vertical-align: middle;

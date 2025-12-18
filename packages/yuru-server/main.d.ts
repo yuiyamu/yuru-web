@@ -57,7 +57,9 @@ declare global {
         isIncomplete: boolean;
         bgLink: string;
         title: string;
+        titleUnicode: string;
         artist: string;
+        artistUnicode: string;
         url: string;
         mapId: string;
         description?: description[];
@@ -70,3 +72,4 @@ declare global {
 }
 
 export { alter, alterTimes, frontHistory, gd, beatmap, beatmapset }
+//sysmember, description, and hover are in the server index.d.ts file ^-^
