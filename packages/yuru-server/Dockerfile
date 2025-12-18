@@ -4,7 +4,7 @@ WORKDIR /usr/local/yuru-server
 
 COPY . .
 RUN npm install
-RUN npm run build
+RUN npm run build-
 
 EXPOSE 3333
 
