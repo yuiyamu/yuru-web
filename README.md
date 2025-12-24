@@ -22,9 +22,9 @@ our system (mostly lilac) is currently working on translating every page on our 
 ## dev notes
 since this project now utilizes sveltekit as its framework, installation and development are relatively simple. just go to the root of the project, run `pnpm install` to install all of the dev dependencies, then `pnpm run dev` to start a local server.
 
-note: because of how individual servers are run for each web page (due to turborepo), you must make sure you have ports `1414` through `1417` open before running.
+note: because of how individual servers are run for each web page (due to turborepo), you must make sure you have ports `1414` through `1417` open before running, as well as port `3333` for the api.
 
-despite using sveltekit, we prefer not using the built in server functionality and, instead, have a single `main.js` in `src/lib/server` which you must also run to have a local backend~ this also assumes that you have all of the necessary .json files to serve, which can be fetched from [here](https://api.yuru.ca/sets), [here](https://api.yuru.ca/gds?person=lilac), and [here](https://api.yuru.ca/gds?person=sydney).
+in order to run a local server, you must also have the required .json files that the api serves by default, which can be fetched from [here](https://api.yuru.ca/sets), [here](https://api.yuru.ca/gds?person=lilac), and [here](https://api.yuru.ca/gds?person=sydney). these should be added to `packages/yuru-server-assets/`, along with a proper .env. instructions on how to make one are in the section below.
 
 ### .env
 
@@ -39,6 +39,12 @@ in the server folder, there's a few enviornment variables you can configure to m
 `UPDATE_EVERY` - the interval in which you'd like maps to update in hours, by default set to 12 hours.
 
 `VALID_ACCESS_KEY` - your access token to modify the set and gd data on the server. this can be whatever you'd like, but make it secure :3
+
+### docker
+
+`yuru-server` now supports running via docker~!!
+
+in order to build and use the image, first make sure that your `yuru-server-assets` folder has all the necessary files. then, simply `docker compose up --build`, and you're good to go~
 
 ### api info
 

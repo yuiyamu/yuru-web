@@ -1,0 +1,9 @@
+services:
+  server:
+    build: .
+    env_file:
+      - ../yuru-server-assets/.env
+    volumes:
+      - ../yuru-server-assets:/usr/local/yuru-server/assets
+    ports:
+      - "3333:3333"

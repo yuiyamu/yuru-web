@@ -4,12 +4,7 @@ node_modules
 #i love macos
 .DS_Store
 
-packages/yuru-server/.env
-packages/yuru-server/sydneygds.json
-packages/yuru-server/lilacgds.json
-packages/yuru-server/sets.json
-packages/yuru-server/switches.json
-
+packages/yuru-server-assets/*
 .vscode
 
 #svelte output

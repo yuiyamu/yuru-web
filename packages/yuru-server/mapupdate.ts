@@ -119,7 +119,7 @@ export async function grabSongInfo(id: number, type: string) {
 }
 
 export function modifySets(newSet: beatmapset, isNew: boolean) {
-  let currentSets = JSON.parse(fs.readFileSync('./sets.json', 'utf-8'));
+  let currentSets = JSON.parse(fs.readFileSync('./assets/sets.json', 'utf-8'));
   if (isNew) { //if it's new, we can just append the new set since we automatically sort complete/incomplete on the frontend~
     currentSets.push(newSet);
   } else {
@@ -127,11 +127,11 @@ export function modifySets(newSet: beatmapset, isNew: boolean) {
     currentSets[setIndex] = newSet;
   }
 
-  fs.writeFileSync('./sets.json', JSON.stringify(currentSets, null, 2));
+  fs.writeFileSync('./assets/sets.json', JSON.stringify(currentSets, null, 2));
 }
 
 export function modifyDiffs(newDiff: gd, isNew: boolean, person: string) {
-  let currentDiffs = JSON.parse(fs.readFileSync(`./${person}gds.json`, 'utf-8'));
+  let currentDiffs = JSON.parse(fs.readFileSync(`./assets/${person}gds.json`, 'utf-8'));
   if (newDiff.status === 'wip' && isNew) { //new wip gds can simply be appended to the bottom~
     currentDiffs.push(newDiff);
   } else {
@@ -150,7 +150,7 @@ export function modifyDiffs(newDiff: gd, isNew: boolean, person: string) {
     }
   }
 
-  fs.writeFileSync(`./${person}gds.json`, JSON.stringify(currentDiffs, null, 2));
+  fs.writeFileSync(`./assets/${person}gds.json`, JSON.stringify(currentDiffs, null, 2));
 }
 
 export async function updateAllMaps(person: string, mapStatus: gd[]) {
@@ -189,7 +189,7 @@ export async function updateAllMaps(person: string, mapStatus: gd[]) {
         }
     }
 
-    let filename = `${person}gds.json`;
+    let filename = `./assets/${person}gds.json`;
     fs.writeFileSync(filename, JSON.stringify(mapStatus, null, 2));
     console.log(`succesfully wrote to ${filename}~! :D`);
 }

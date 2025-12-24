@@ -13,6 +13,7 @@ const app = express();
 
 app.listen(3333, () => {
     console.log(`\x1b[45myuru.ca server\x1b[0m - currently listening on port 3333~`);
+    console.log(`\x1b[45myuru.ca server\x1b[0m - launched from ${path.resolve()}`);
     initialize();
 });
 app.use(cors());
@@ -23,8 +24,8 @@ app.use(express.urlencoded({ extended: true }));
 var mapStatusSydney;
 var mapStatusLilac;
 function refreshMapStatuses() {
-    mapStatusSydney = JSON.parse(fs.readFileSync('sydneygds.json', 'utf8'));
-    mapStatusLilac = JSON.parse(fs.readFileSync('lilacgds.json', 'utf8'));
+    mapStatusSydney = JSON.parse(fs.readFileSync('./assets/sydneygds.json', 'utf8'));
+    mapStatusLilac = JSON.parse(fs.readFileSync('./assets/lilacgds.json', 'utf8'));
 }
 
 refreshMapStatuses(); //initializes map statuses, in this case~
@@ -35,6 +36,7 @@ async function initialize() {
         console.log(`Automatically updating all maps...`);
         await updateAllMaps('sydney', mapStatusSydney);
         await updateAllMaps('lilac', mapStatusLilac);
+        refreshMapStatuses();
     }, refreshInterval*1000*60*60); //autoupdateEvery is in hours, so we're converting to ms for setInterval to be happy
 }
 
@@ -73,14 +75,14 @@ app.get('/gds', (req, res) => { //sends back the gd info we have stored
     let gdInfo;
 
     if (person === 'sydney' || person === 'syd') {
-        gdInfo = JSON.parse(fs.readFileSync('./sydneygds.json', 'utf-8'));
+        gdInfo = JSON.parse(fs.readFileSync('./assets/sydneygds.json', 'utf-8'));
         if (query) {
             res.send(filterSearchResults(gdInfo, query, 'gd'));
         } else {
             res.send(gdInfo);
         }
     } else if (person === 'lilac') {
-        gdInfo = JSON.parse(fs.readFileSync('./lilacgds.json', 'utf-8'))
+        gdInfo = JSON.parse(fs.readFileSync('./assets/lilacgds.json', 'utf-8'))
         if (query) {
             res.send(filterSearchResults(gdInfo, query, 'gd'));
         } else {
@@ -93,7 +95,7 @@ app.get('/gds', (req, res) => { //sends back the gd info we have stored
 
 app.get('/sets', (req, res) => { //sends back set info we have stored c:
     let query = req.query.search;
-    let sets = JSON.parse(fs.readFileSync('./sets.json', 'utf-8'));
+    let sets = JSON.parse(fs.readFileSync('./assets/sets.json', 'utf-8'));
 
     if (query) {
         res.send(filterSearchResults(sets, query, 'set'));
@@ -270,7 +272,7 @@ app.get('/recentFronts', async(req, res) => {
         for (const [alterId, alterName] of memberMap) { //checking to see if any of our core members haven't fronted in the last 30 days
             let alterIndex = alterInfo.findIndex(alter => alter.name === alterName);
             if (alterIndex === -1) { //if we encounter an alter that isn't there (:OO)
-                let frontData = JSON.parse(fs.readFileSync('switches.json', 'utf-8'));
+                let frontData = JSON.parse(fs.readFileSync('./assets/switches.json', 'utf-8'));
                 let lastFrontIndex = frontData.findIndex(front => front.members[0] === alterId);
 
                 alterInfo.push({
@@ -308,7 +310,7 @@ app.get('/frontData', async(req, res) => {
 
     try {
         if (customSystemId === systemId) {
-            frontData = JSON.parse(fs.readFileSync('switches.json', 'utf-8'));
+            frontData = JSON.parse(fs.readFileSync('./assets/switches.json', 'utf-8'));
             endPeriod = new Date(frontData[frontData.length-1].timestamp).getTime();
 
             //before we make our alter info object, we need to make sure our pk data is up to date~
@@ -323,7 +325,7 @@ app.get('/frontData', async(req, res) => {
             while (!foundSameSwitch && i < parsedResp.length) {
                 if (parsedResp[i].id === firstId) {
                     frontData = newSwitches.concat(frontData);
-                    fs.writeFile('./switches.json', JSON.stringify(frontData, null, 2), 'utf8', (err) => {
+                    fs.writeFile('./assets/switches.json', JSON.stringify(frontData, null, 2), 'utf8', (err) => {
                         if (err) {
                             console.log('something went wrong writing to switches.json >_<;;');
                         }
